@@ -8,3 +8,6 @@ Use `spam.py` to start spamming a server with fake beacons
 ```
 usage: spam.py [-h] url
 ```
+
+## Note
+You might want to use a tool like https://github.com/GitHackTools/TorghostNG on your VM to hide your real IP
