@@ -8,7 +8,13 @@ Use `spam.py` to start spamming a server with fake beacons
 
 ## Usage
 ```
-usage: spam.py [-h] url
+usage: spam.py [-h] [-u URL | -f FILE]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -u URL, --url URL
+  -f FILE, --file FILE
+
 ```
 
 ## Note
