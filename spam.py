@@ -79,7 +79,7 @@ def register_beacon(conf):
     t = Transform(conf['HttpGet_Metadata'])
     body, headers, params = t.encode(m.pack().decode('latin-1'), '', str(m.bid))
 
-    print('[+] Registering new random beacon: comp=%s user=%s' % (m.comp, m.user))
+    print('[+] Registering new random beacon: comp=%s user=%s url=%s' % (m.comp, m.user, conf['C2Server']))
     try:
         req = requests.request('GET', urljoin('http://'+conf['C2Server'].split(',')[0], conf['C2Server'].split(',')[1]), params=params, data=body, headers=dict(**headers, **{'User-Agent':''}), timeout=5)
     except Exception as e:
@@ -116,18 +116,53 @@ def register_beacon(conf):
 
 
 if __name__ == '__main__':
+    '''
     parser = argparse.ArgumentParser(description="Parse CobaltStrike Beacon's configuration from C2 url and registers a beacon with it")
-    parser.add_argument("url", help="Cobalt C2 server (e.g. http://1.1.1.1)")
+    #parser.add_argument('source', choices=('url', 'file'))
+    parser.add_argument("url", help="Cobalt C2 server (e.g. http://1.1.1.1)", required=False)
+    parser.add_argument("file", help="Text file with list of Cobalt C2 servers - One server per line")
+    args = parser.parse_args()
+    '''
+    parser = argparse.ArgumentParser()
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument("-u", "--url")
+    group.add_argument("-f", "--file")
     args = parser.parse_args()
 
-    x86_beacon_conf = get_beacon_data(args.url, 'x86')
-    x64_beacon_conf = get_beacon_data(args.url, 'x64')
-    if not x86_beacon_conf and not x64_beacon_conf:
-        print("[-] Failed finding any beacon configuration")
-        exit(1)
+    if args.url:
+        x86_beacon_conf = get_beacon_data(args.url, 'x86')
+        x64_beacon_conf = get_beacon_data(args.url, 'x64')
+        if not x86_beacon_conf and not x64_beacon_conf:
+            print("[-] Failed finding any beacon configuration")
+            exit(1)
 
-    print("[+] Got beacon configuration successfully")
-    conf = x86_beacon_conf or x64_beacon_conf
+        print("[+] Got beacon configuration successfully")
+        conf = x86_beacon_conf or x64_beacon_conf
     
-    while (1 == 1):
-        register_beacon(conf)
+        while (1 == 1):
+            register_beacon(conf)
+
+    if args.file:
+        confs = []
+        try:
+            f = open(args.file, 'r')
+        except OSError:
+            print("Could not open/read file:", fname)
+            sys.exit()
+
+        with f:
+            reader = f.readlines()
+            for line in reader:
+                print(line)
+                x86_beacon_conf = get_beacon_data(line, 'x86')
+                x64_beacon_conf = get_beacon_data(line, 'x64')
+                if not x86_beacon_conf and not x64_beacon_conf:
+                    print("[-] Failed finding any beacon configuration")
+                else:
+                    print("[+] Got beacon configuration successfully")
+                    conf = x86_beacon_conf or x64_beacon_conf
+                    confs.append(conf)
+
+        while (1 == 1):
+            for c in confs:
+                register_beacon(c)
