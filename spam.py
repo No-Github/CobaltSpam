@@ -115,14 +115,7 @@ def register_beacon(conf):
 
 
 
-if __name__ == '__main__':
-    '''
-    parser = argparse.ArgumentParser(description="Parse CobaltStrike Beacon's configuration from C2 url and registers a beacon with it")
-    #parser.add_argument('source', choices=('url', 'file'))
-    parser.add_argument("url", help="Cobalt C2 server (e.g. http://1.1.1.1)", required=False)
-    parser.add_argument("file", help="Text file with list of Cobalt C2 servers - One server per line")
-    args = parser.parse_args()
-    '''
+if __name__ == '__main__':    
     parser = argparse.ArgumentParser()
     group = parser.add_mutually_exclusive_group()
     group.add_argument("-u", "--url")
