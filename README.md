@@ -1,6 +1,8 @@
 # CobaltSpam
 Tool based on CobaltStrikeParser (https://github.com/Sentinel-One/CobaltStrikeParser) from SentinelOne which can be used to spam a CobaltStrike server with fake beacons
 
+![alt text](https://github.com/hariomenkel/CobaltSpam/blob/master/CS.PNG?raw=true)
+
 ## Description
 Use `spam.py` to start spamming a server with fake beacons
 
