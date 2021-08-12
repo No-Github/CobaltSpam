@@ -14,6 +14,7 @@ import os
 import string
 import M2Crypto
 import requests
+import spam_utils
 
 PUBLIC_KEY_TEMPLATE = "-----BEGIN PUBLIC KEY-----\n{}\n-----END PUBLIC KEY-----"
 
@@ -35,8 +36,8 @@ class Metadata(object):
         self.charset = 20273
         self.ver = random.randint(1,10)
         self.ip = os.urandom(4)
-        self.comp = ''.join(random.choices(string.ascii_uppercase + string.digits, k=7))
-        self.user = ''.join(random.choices(string.ascii_uppercase + string.digits, k=7))
+        self.comp = spam_utils.create_hostname()
+        self.user = spam_utils.create_username()
         self.pid = random.randint(1,50000) * 4 - 2  # ;)
         self.bid = random.randint(1,1000000) * 2
         self.barch = 1
@@ -47,8 +48,7 @@ class Metadata(object):
         d = hashlib.sha256(aes_source_bytes).digest()        
         self.aes_key = d[0:16]
         self.hmac_key = d[16:]
-
-
+    
     def rsa_encrypt(self, data):
         """Encrypt given data the way Cobalt's server likes
         
@@ -244,10 +244,4 @@ class Transform(object):
             else:
                 sessionId = func_dict_decode[action](arg, sessionId)
 
-        return metadata, output, sessionId
-
-
-
-
-
-        
+        return metadata, output, sessionId        
